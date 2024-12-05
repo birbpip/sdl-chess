@@ -1,1 +1,1 @@
-g++ main.cpp -o testcube.exe -IC:\sdl\src\include -LC:\sdl\src\lib -lSDL2 -lglew32 -mwindows
+g++ main.cpp -o testcube.exe -IC:\sdl\sdl-chess\src\include -LC:\sdl\sdl-chess\src\lib -lSDL2 -lglew32 -mwindows
