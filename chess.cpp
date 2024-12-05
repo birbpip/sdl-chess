@@ -26,7 +26,7 @@ void resetAll(bool img_select_bool[]) {
     }
 }
 bool isMovingCorrectly(int x, int y, int desiredx, int desiredy) {
-    //fuck you
+
     if (y < 0 || x < 0) {
         return false;
     }
@@ -35,8 +35,6 @@ bool isMovingCorrectly(int x, int y, int desiredx, int desiredy) {
     int vdesiredx = abs((desiredx - 58) / 88);
     int vdesiredy = abs((desiredy - 124) / 128);
     if (abs(vX - vdesiredx) <= 1 && abs(vY - vdesiredy) <= 1) {return true;}
-        
-
     return false;
 }
 
@@ -49,7 +47,7 @@ int main(int argc, char *argv[]) {
     int img_w, img_h, img2_w, img2_h, select_w, select_h;
 
     SDL_Init(SDL_INIT_VIDEO);
-    
+
     win = SDL_CreateWindow("Image Loading", 100, 100, WIDTH, HEIGHT, 0);
     renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 
@@ -62,7 +60,7 @@ int main(int argc, char *argv[]) {
     SDL_QueryTexture(select, NULL, NULL, &select_w, &select_h);
 
     SDL_Rect img_rects[NUM_IMGS];
-    int img_rectstype[NUM_IMGS] = {0, 1}; 
+    int img_rectstype[NUM_IMGS] = {0, 1};
     bool img_selected_bool[NUM_IMGS] = {false, false};
 
     for (int i = 0; i < NUM_IMGS; i++) {
@@ -104,11 +102,24 @@ int main(int argc, char *argv[]) {
                 }
             }
         }
-
-        SDL_SetRenderDrawColor(renderer, 9, 70, 34, 255);
+        SDL_SetRenderDrawColor(renderer, 150,97,61, 255);
         SDL_RenderClear(renderer);
-        
-        // Render images
+
+        for (int y = 0; y < HEIGHT - 128 -128 -128 -128; y += MOVE_STEPy) {
+            for (int x = 0; x < WIDTH - MOVE_STEP * 19; x += MOVE_STEP) {
+
+                if ((x / MOVE_STEP) % 2 == (y / MOVE_STEPy) % 2) {
+                    SDL_SetRenderDrawColor(renderer, 5, 70, 34, 255); // Dark Green
+                } else {
+                    SDL_SetRenderDrawColor(renderer, 153, 122, 0, 255); // White
+                }
+
+                SDL_Rect rect = {x - 30 + MOVE_STEP * 10, y - 132 + 128 + 128 + 128, MOVE_STEP, MOVE_STEPy};
+                SDL_RenderFillRect(renderer, &rect);
+            }
+        }
+
+
         for (int i = 0; i < NUM_IMGS; i++) {
             if (img_rectstype[i] == 0) {
                 SDL_RenderCopy(renderer, img, NULL, &img_rects[i]); // Render card1
@@ -117,8 +128,6 @@ int main(int argc, char *argv[]) {
             }
 
             if (img_rects[i].x == select_rect.x && img_rects[i].y == select_rect.y) {
-                //printf("Match found: x = %d, y = %d\n", img_rects[i].x, img_rects[i].y);
-                
                 if (space_pressed) {
                     resetAll(img_selected_bool);
                     img_selected_bool[i] = true;
@@ -127,12 +136,8 @@ int main(int argc, char *argv[]) {
             } else {
                 if (img_selected_bool[i] && space_pressed && !istherepiece(select_rect.x, select_rect.y, img_rects)) {
                     if (isMovingCorrectly(img_rects[i].x, img_rects[i].y, select_rect.x, select_rect.y) == true) {
-                        printf("card posx: %d\n", img_rects[i].x);
-                        printf("card posy: %d\n", img_rects[i].y);
                         img_rects[i].x = select_rect.x;
                         img_rects[i].y = select_rect.y;
-                        printf("desired card posx: %d\n", img_rects[i].x);
-                        printf("desired card posy: %d\n", img_rects[i].y);
                         resetAll(img_selected_bool);
                     }
                 }
@@ -141,7 +146,7 @@ int main(int argc, char *argv[]) {
 
         space_pressed = false;
 
-        // Render select image
+
         SDL_RenderCopy(renderer, select, NULL, &select_rect);
 
         SDL_RenderPresent(renderer);
